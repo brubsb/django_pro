@@ -42,4 +42,22 @@ def add(request):
     else:
         return render(request, 'mycontacts/add.html')
 
-    
+def details(request, contact_id):
+    contact = Contact.objects.get(id=contact_id)
+    return render(request, 'mycontacts/details.html', {'contact': contact})
+
+def edit(request, contact_id):
+    contact = Contact.objects.get(id=contact_id)
+    if request.method == 'POST':
+        django_form = AddForm(request.POST, instance=contact)
+        if django_form.is_valid():
+            django_form.save()
+            return HttpResponseRedirect('/')
+    else:
+        django_form = AddForm(instance=contact)
+    return render(request, 'mycontacts/edit.html', {'form': django_form, 'contact': contact})
+
+def delete(request, contact_id):
+    contact = Contact.objects.get(id=contact_id)
+    contact.delete()
+    return HttpResponseRedirect("/")
